@@ -43,6 +43,34 @@ app.get('/', (req, res) => {
   })
 })
 
+app.get('/api/bills', async (req, res) => {
+  try {
+    const { category, limit } = req.query
+    let query = {}
+
+    if (category) {
+      query.category = category
+    }
+
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+
+    let bills = await db.collection('bills')
+      .find(query)
+      .sort({ date: -1 })
+      .toArray()
+
+    if (limit) {
+      bills = bills.slice(0, parseInt(limit))
+    }
+
+    res.json(bills)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
