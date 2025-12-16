@@ -71,6 +71,32 @@ app.get('/api/bills', async (req, res) => {
   }
 })
 
+app.get('/api/bills/:id', async (req, res) => {
+  try {
+    const billId = req.params.id
+    
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+    
+    if (!ObjectId.isValid(billId)) {
+      return res.status(400).json({ error: 'Invalid bill ID format' })
+    }
+
+    const bill = await db.collection('bills')
+      .findOne({ _id: new ObjectId(billId) })
+    
+    if (!bill) {
+      return res.status(404).json({ error: 'Bill not found' })
+    }
+    
+    res.json(bill)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
