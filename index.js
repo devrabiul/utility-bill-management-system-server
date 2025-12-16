@@ -28,6 +28,21 @@ async function run() {
 }
 run().catch(console.dir);
 
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Utility Bill Management System API',
+    status: 'Running',
+    endpoints: {
+      getAllBills: 'GET /api/bills',
+      getBillById: 'GET /api/bills/:id',
+      getRecentBills: 'GET /api/bills?limit=6',
+      getBillsByCategory: 'GET /api/bills?category=Electricity',
+      createBill: 'POST /api/bills',
+      myBills: 'GET /api/my-bills?userId=USER_ID'
+    }
+  })
+})
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
