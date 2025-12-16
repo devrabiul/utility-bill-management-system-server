@@ -175,6 +175,28 @@ app.put('/api/my-bills/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/my-bills/:id', async (req, res) => {
+  try {
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+    
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid bill ID format' })
+    }
+    
+    const result = await db.collection('mybills')
+      .deleteOne({ _id: new ObjectId(req.params.id) });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Bill not found' });
+    }
+    
+    res.json({ message: 'Bill deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
