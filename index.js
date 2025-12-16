@@ -144,6 +144,38 @@ app.post('/api/my-bills', async (req, res) => {
   }
 });
 
+app.put('/api/my-bills/:id', async (req, res) => {
+  try {
+    const updates = req.body;
+    
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+    
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: 'Invalid bill ID format' })
+    }
+    
+    const result = await db.collection('mybills')
+      .updateOne(
+        { _id: new ObjectId(req.params.id) },
+        { $set: { ...updates, updatedAt: new Date() } }
+      );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Bill not found' });
+    }
+    
+    const updatedBill = await db.collection('mybills')
+      .findOne({ _id: new ObjectId(req.params.id) });
+    
+    res.json(updatedBill);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
