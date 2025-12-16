@@ -120,6 +120,29 @@ app.get('/api/my-bills', async (req, res) => {
   }
 });
 
+app.post('/api/my-bills', async (req, res) => {
+  try {
+    const billData = req.body;
+    
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+
+    const result = await db.collection('mybills')
+      .insertOne({
+        ...billData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    
+    const newBill = await db.collection('mybills')
+      .findOne({ _id: result.insertedId });
+    
+    res.status(201).json(newBill);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
