@@ -96,6 +96,30 @@ app.get('/api/bills/:id', async (req, res) => {
   }
 })
 
+app.get('/api/my-bills', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    let query = {};
+
+    if (userId) {
+      query.userId = userId;
+    }
+
+    if (!db) {
+      return res.status(500).json({ error: 'Database not connected' })
+    }
+
+    const myBills = await db.collection('mybills')
+      .find(query)
+      .sort({ date: -1 })
+      .toArray();
+
+    res.json(myBills);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
