@@ -37,8 +37,12 @@ app.get('/', (req, res) => {
       getBillById: 'GET /api/bills/:id',
       getRecentBills: 'GET /api/bills?limit=6',
       getBillsByCategory: 'GET /api/bills?category=Electricity',
-      createBill: 'POST /api/bills',
-      myBills: 'GET /api/my-bills?userId=USER_ID'
+      myBills: {
+        get: 'GET /api/my-bills?userId=USER_ID',
+        create: 'POST /api/my-bills',
+        update: 'PUT /api/my-bills/:id',
+        delete: 'DELETE /api/my-bills/:id'
+      }
     }
   })
 })
